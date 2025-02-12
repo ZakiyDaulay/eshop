@@ -40,4 +40,19 @@ public class ProductRepository {
         }
         return null;
     }
+
+
+    public Product findById(String id) {
+        for (Product product : productData) {
+            if (id.equals(product.getProductId())) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+
+    public void delete(String id) {
+        productData.removeIf(product -> id.equals(product.getProductId()));
+    }
 }

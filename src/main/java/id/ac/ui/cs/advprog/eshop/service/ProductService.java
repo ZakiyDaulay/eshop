@@ -11,3 +11,7 @@ public interface ProductService {
     Product getById(String productId);
 
 }
+    void delete(String productId);
+    Product getById(String productId);
+
+}
