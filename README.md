@@ -1,4 +1,4 @@
-## **Assignemnt 1 Reflection 1**
+## **Assignment 1 Reflection 1**
 
 I created two features in the application, the edit and delete features. Now when a user creates a product there will be an "actions" column in 
 the product list page, where the user can press a delete or edit button. When the user clicks delete, a window will appear asking the user to confirm
@@ -9,7 +9,7 @@ such as editproduct,findall,createproductpost,etc. I also added some comments to
 by Handling errors properly such as adding an error 404 page if a product or page doesn't exist. I could've used some method to ensure that the each fields
 in the create product page are filled in. 
 
-## **Assignemnt 1 Reflection 2**
+## **Assignment 1 Reflection 2**
 Creating unit tests gives me a feeling of assurance that my program is working correctly, as the unit tests are a great way for me to check
 if logic of my program is correct. But getting 100% on our unit tests doesn't automatically mean that our code is perfect as it only means that the
 code we wrote was executed properly.
