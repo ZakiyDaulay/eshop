@@ -12,9 +12,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+    private final ProductService service;
 
     @Autowired
-    private ProductService service;
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
@@ -36,27 +39,25 @@ public class ProductController {
         return "productList";
     }
 
-//using GET method to retrieve the product by using product ID
+    // Using GET method to retrieve the product by using product ID
     @GetMapping("/edit/{productId}")
     public String editProductPage(@PathVariable String productId, Model model) {
         Product product = service.getById(productId);
         model.addAttribute("product", product);
         return "editProduct";
     }
-    //using POST method to submit the edited product to the form
+
+    // Using POST method to submit the edited product to the form
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product) {
         service.update(product);
-
         return "redirect:/product/list";
     }
 
-
-    //using a delete method to delete the product
+    // Using a delete method to delete the product
     @GetMapping("/delete/{productId}")
     public String deleteProduct(@PathVariable String productId) {
         service.delete(productId);
         return "redirect:/product/list";
     }
-
 }
