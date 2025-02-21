@@ -43,6 +43,7 @@ class ProductRepositoryTest {
         Iterator<Product> productIterator = productRepository.findAll();
         assertFalse(productIterator.hasNext());
     }
+
     @Test
     void testFindAllIfMoreThanOneProduct() {
         Product product1 = new Product();
@@ -66,12 +67,11 @@ class ProductRepositoryTest {
         assertFalse(productIterator.hasNext());
 
     }
-
     //Positive scenarios
     @Test
     void testDeleteExistingProduct() {
         //adding the product
-        Product product=new Product();
+        Product product = new Product();
         product.setProductId("product-1");
         product.setProductQuantity(5);
         product.setProductName("TestProduct");
@@ -91,13 +91,17 @@ class ProductRepositoryTest {
         product.setProductQuantity(6);
         product.setProductName("OriginalProduct");
         productRepository.create(product);
-        //editing the product name
-        product.setProductName("UpdatedProduct");
-        product.setProductQuantity(6);
-        productRepository.update(product);
-
-        //check if the update worked
-        Product result = productRepository.findById("product-4");
+        // verify the initial state
+        Product initialProduct = productRepository.findById("product-4");
+        assertNotNull(initialProduct);
+        assertEquals("OriginalProduct", initialProduct.getProductName());
+        assertEquals(6, initialProduct.getProductQuantity());
+        // edit the product name and quantity using a new object
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("product-4");
+        updatedProduct.setProductName("UpdatedProduct");
+        updatedProduct.setProductQuantity(6);
+        Product result = productRepository.update(updatedProduct);
         assertNotNull(result);
         assertEquals("UpdatedProduct", result.getProductName());
         assertEquals(6, result.getProductQuantity());
@@ -106,15 +110,22 @@ class ProductRepositoryTest {
         assertNotNull(newProduct);
         assertEquals("UpdatedProduct", newProduct.getProductName());
         assertEquals(6, newProduct.getProductQuantity());
-    }
+        // also check that the changes are reflected in the repository.
+        Product retrievedProduct = productRepository.findById("product-4");
+        assertNotNull(retrievedProduct);
+        assertEquals("UpdatedProduct", retrievedProduct.getProductName());
+        assertEquals(6, retrievedProduct.getProductQuantity());
 
+        // findById returns null for non-existent product.
+        assertNull(productRepository.findById("non-existent-id"));
+    }
 
 
     //Negative Scenario
     @Test
-    void testDeleteNonExistentProduct(){
-    //adding a product
-        Product product=new Product();
+    void testDeleteNonExistentProduct() {
+        //adding a product
+        Product product = new Product();
         product.setProductId("product-1");
         product.setProductQuantity(10);
         product.setProductName("TestProduct");
@@ -122,13 +133,19 @@ class ProductRepositoryTest {
         //deleting a product with an nonexistent id
         productRepository.delete("product-333");
         //check if the product that was added is still in the repository
-        Product retrievedProduct =productRepository.findById("product-1");
+        Product retrievedProduct = productRepository.findById("product-1");
         assertNotNull(retrievedProduct);
         assertEquals("TestProduct", retrievedProduct.getProductName());
         assertEquals(10, retrievedProduct.getProductQuantity());
     }
+
     @Test
-    void testUpdateNonExistentProduct(){
+    void testUpdateNonExistentProduct() {
+        Product existingProduct = new Product();
+        existingProduct.setProductId("product-6");
+        existingProduct.setProductName("RealProduct");
+        existingProduct.setProductQuantity(20);
+        productRepository.create(existingProduct);
 
         // Prepare an updated product with an ID that is not in the repository.
         Product updatedProduct = new Product();
@@ -139,9 +156,9 @@ class ProductRepositoryTest {
         // Attempt to update and expect a null result.
         Product result = productRepository.update(updatedProduct);
         assertNull(result);
+        assertNull(productRepository.findById("product33"));
+
 
     }
 
-    }
-
-
+}
