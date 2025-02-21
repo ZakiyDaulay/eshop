@@ -16,3 +16,16 @@ code we wrote was executed properly.
 
 A new functional test suite would introduce duplications of code because it will follow the same setup and variables as existing tests 
 which can make future updates more difficult. What we should do is to use a similar setup logic to make it more reusable. 
+
+## **Assignment 3 Reflection 1**
+List the code quality issue(s) that you fixed during the exercise and explain your strategy on fixing them. 
+The code quality issue that I fixed was removing the field injections. I followed what Sonarcloud did and added constructor injections instead.I did this 
+to prevent the creation of objects
+in an invalid state.
+
+Look at your CI/CD workflows (GitHub)/pipelines (GitLab). Do you think the current implementation has met the definition of 
+Continuous Integration and Continuous Deployment? Explain the reasons (minimum 3 sentences)!
+
+I think my workflow met the definition of CI/CD. This is because my workflow succesfully does unit tests, does a code
+quality check, and security analysis after every push using the scorecard, sonarcloud, and Ci yml files. The workflow also deploys after every push and builds the docker
+image using Koyeb.
