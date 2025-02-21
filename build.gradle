@@ -82,9 +82,13 @@ tasks.jacocoTestReport {// ensures jacocotestreport will run after test
             csv.required = false
         }
     }
-sonarqube {
+
+sonar {
     properties {
-        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        property("sonar.projectKey", "ZakiyDaulay_eshop")
+        property("sonar.organization", "zakiydaulay")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+
     }
 }
-
