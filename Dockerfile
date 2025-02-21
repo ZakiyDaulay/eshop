@@ -7,7 +7,7 @@ FROM docker.io/library/eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /src/eshop
 
 # Copy project files into container
-COPY . .
+COPY .github/workflows .
 
 RUN chmod +x ./gradlew
 
