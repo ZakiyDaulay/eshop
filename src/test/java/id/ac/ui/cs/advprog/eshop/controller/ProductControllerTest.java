@@ -2,90 +2,113 @@ package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Collections;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductController.class)
-class ProductControllerTest {
+@ExtendWith(MockitoExtension.class)
+public class ProductControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private ProductService productService;
 
+    @InjectMocks
+    private ProductController productController;
+
+    @BeforeEach
+    public void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+    }
+
     @Test
-    void shouldDisplayCreateProductPage() throws Exception {
+    public void testCreateProductPage() throws Exception {
+        // Perform GET /product/create and expect a new Product to be added in the model
         mockMvc.perform(get("/product/create"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("CreateProduct"))
+                .andExpect(view().name("createProduct"))
                 .andExpect(model().attributeExists("product"));
     }
 
     @Test
-    void shouldProcessProductCreation() throws Exception {
+    public void testCreateProductPost() throws Exception {
+        // Perform POST /product/create with sample parameters
         mockMvc.perform(post("/product/create")
                         .param("id", "1")
-                        .param("name", "Sample Product"))
+                        .param("name", "Test Product"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        verify(productService, times(1)).create(any(Product.class));
+        // Verify that the service's create method is called with any Product instance.
+        verify(productService).create(ArgumentMatchers.any(Product.class));
     }
 
     @Test
-    void shouldDisplayProductListPage() throws Exception {
-        List<Product> products = Collections.singletonList(new Product());
-        when(productService.findAll()).thenReturn(products);
+    public void testProductListPage() throws Exception {
+        // Prepare a list of products to be returned by the mocked service.
+        List<Product> productList = Arrays.asList(new Product(), new Product());
+        when(productService.findAll()).thenReturn(productList);
 
+        // Perform GET /product/list and verify model and view.
         mockMvc.perform(get("/product/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("productList"))
-                .andExpect(model().attribute("products", products));
+                .andExpect(model().attribute("products", productList));
     }
 
     @Test
-    void shouldDeleteProductSuccessfully() throws Exception {
-        String productId = "2";
+    public void testDeleteProduct() throws Exception {
+        String productId = "1";
 
+        // Perform GET /product/delete/{productId} and verify redirection.
         mockMvc.perform(get("/product/delete/" + productId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        verify(productService, times(1)).delete(productId);
+        // Verify that the service's delete method is called with the correct productId.
+        verify(productService).delete(productId);
     }
 
     @Test
-    void shouldShowEditProductPage() throws Exception {
-        String productId = "3";
-        Product mockProduct = new Product();
-        when(productService.getById(productId)).thenReturn(mockProduct);
+    public void testEditProductPage() throws Exception {
+        String productId = "1";
+        Product product = new Product();
+        // Configure the mocked service to return a Product for the given id.
+        when(productService.getById(productId)).thenReturn(product);
 
+        // Perform GET /product/edit/{productId} and verify view and model.
         mockMvc.perform(get("/product/edit/" + productId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editProduct"))
-                .andExpect(model().attribute("product", mockProduct));
+                .andExpect(model().attribute("product", product));
     }
 
     @Test
-    void shouldProcessProductUpdate() throws Exception {
+    public void testEditProductPost() throws Exception {
+        // Perform POST /product/edit with sample product parameters.
         mockMvc.perform(post("/product/edit")
-                        .param("id", "3")
-                        .param("name", "Updated Sample"))
+                        .param("id", "1")
+                        .param("name", "Updated Product"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        verify(productService, times(1)).update(any(Product.class));
+        // Verify that the service's update method is called with any Product instance.
+        verify(productService).update(ArgumentMatchers.any(Product.class));
     }
 }
