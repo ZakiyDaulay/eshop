@@ -6,10 +6,15 @@ FROM docker.io/library/eclipse-temurin:21-jdk-alpine AS builder
 # Set working directory
 WORKDIR /src/eshop
 
-# Copy project files into container
-COPY .github/workflows .
+# Copy Gradle wrapper scripts and related files explicitly
+COPY gradlew gradlew
+COPY gradle gradle
 
-RUN chmod +x ./gradlew
+# Ensure execution permissions
+RUN chmod +x gradlew
+
+# Copy all project files
+COPY . .
 
 # Build the JAR file using Gradle
 RUN ./gradlew clean bootJar
