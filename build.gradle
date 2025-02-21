@@ -75,5 +75,16 @@ tasks.test {//
 }
 
 tasks.jacocoTestReport {// ensures jacocotestreport will run after test
-    dependsOn(tasks.test)
+        dependsOn(tasks.test)
+        reports {
+            xml.required = true
+            html.required = true
+            csv.required = false
+        }
+    }
+sonarqube {
+    properties {
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }
+
