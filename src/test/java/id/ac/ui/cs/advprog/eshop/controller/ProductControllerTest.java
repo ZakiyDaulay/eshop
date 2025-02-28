@@ -76,12 +76,12 @@ public class ProductControllerTest {
     public void testDeleteProduct() throws Exception {
         String productId = "1";
 
-        // Perform GET /product/delete/{productId} and verify redirection.
-        mockMvc.perform(get("/product/delete/" + productId))
+        // using post
+        mockMvc.perform(post("/product/delete")
+                        .param("productId", productId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
-
-        // Verify that the service's delete method is called with the correct productId.
+        
         verify(productService).delete(productId);
     }
 
