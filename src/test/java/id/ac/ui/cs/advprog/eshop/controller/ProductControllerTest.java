@@ -81,7 +81,7 @@ public class ProductControllerTest {
                         .param("productId", productId))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
-        
+
         verify(productService).delete(productId);
     }
 
