@@ -70,8 +70,8 @@ class OrderTest {
                 this.products, 1708560000L, "Safira Sudrajat"
         );
 
-        order.setStatus(OrderStatus.CANCELLED.getValue());
-        assertEquals(OrderStatus.CANCELLED.getValue(), order.getStatus());
+        order.setStatus("CANCELLED");
+        assertEquals("CANCELLED", order.getStatus());
     }
     @Test
     void testSetStatusToInvalidStatus() {
