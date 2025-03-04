@@ -49,7 +49,7 @@ class OrderServiceTest {
         doReturn(order).when(orderRepository).save(order);
 
         Order result = orderService.createOrder(order);
-        verify(orderRepository,times(1).save(order));
+        verify(orderRepository,times(1)).save(order);
         assertEquals(order.getId(),result.getId());
     }
     @Test
@@ -57,21 +57,21 @@ class OrderServiceTest {
         Order order = orders.get(1);
         doReturn(order).when(orderRepository).findById(order.getId());
         assertNull(orderService.createOrder(order));
-        verify(orderRepository,times(0).save(order));
+        verify(orderRepository,times(0)).save(order);
 
     }
     @Test
     void testUpdateStatus() {
         Order order = orders.get(1);
-        Order newOrder = new Order(order.getId(),order.getProducts,order.getOrderTime(),
-                order.getAuthor().OrderStatus.SUCCESS.getValue());
+        Order newOrder = new Order(order.getId(),order.getProducts(),order.getOrderTime(),
+                order.getAuthor(),OrderStatus.SUCCESS.getValue());
         doReturn(order).when(orderRepository).findById(order.getId());
         doReturn(newOrder).when(orderRepository).save(any(Order.class));
 
         Order result = orderService.updateStatus(order.getId(),OrderStatus.SUCCESS.getValue());
         assertEquals(order.getId(),result.getId());
-        assertEquals(OrderStatus.SUCCESS.getvalue(),result.getStatus());
-        verify(orderRepository,times(1).save(any(Order.class));
+        assertEquals(OrderStatus.SUCCESS.getValue(), result.getStatus());
+        verify(orderRepository,times(1)).save(any(Order.class));
     }
     @Test
     void testUpdateStatusInvalidStatus() {
@@ -92,7 +92,7 @@ class OrderServiceTest {
     void testFindByIdIfIdFound() {
         Order order = orders.get(1);
         doReturn(order).when(orderRepository).findById(order.getId());
-        Order result = orderService.findById(order.getId);
+        Order result = orderService.findById(order.getId());
         assertEquals(order.getId(),result.getId());
     }
     @Test
