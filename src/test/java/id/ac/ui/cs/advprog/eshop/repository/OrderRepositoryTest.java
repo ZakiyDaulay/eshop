@@ -58,7 +58,7 @@ class OrderRepositoryTest {
         assertEquals(order.getId(),findResult.getId());
         assertEquals(order.getOrderTime(),findResult.getOrderTime());
         assertEquals(order.getAuthor(),findResult.getAuthor());
-        assertEquals(order.getStatus(),findResult.getStatus());
+        assertEquals(OrderStatus.SUCCESS.getValue(),findResult.getStatus());
     }
     @Test
     void testfindByIdIfIdFound(){
@@ -97,7 +97,7 @@ class OrderRepositoryTest {
     void testFindAllByAuthorIfAllLowercase() {
         orderRepository.save(orders.get(1));
         List<Order> orderList = orderRepository.findAllByAuthor(
-                orders.get(1).getAuthor());
+                orders.get(1).getAuthor().toLowerCase());
         assertTrue(orderList.isEmpty());
     }
 
