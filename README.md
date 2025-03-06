@@ -51,3 +51,8 @@ Disadvantages of not using SOLID:
 of the classes is not good
 2. Not implementing OCP means that implementing new features would have to modify existing classes that have no bugs.
 3. Not implementing DIP would mean that classes depend on concrete implementations which can make unit testing more difficult.
+
+## **Assignment 4 Reflection 1**
+
+Reflect based on Percival (2017) proposed self-reflective questions (in “Principles and Best Practice of Testing” submodule, chapter “Evaluating Your Testing Objectives”), whether this TDD flow is useful enough for you or not. If not, explain things that you need to do next time you make more tests.
+You have created unit tests in Tutorial. Now reflect whether your tests have successfully followed F.I.R.S.T. principle or not. If not, explain things that you need to do the next time you create more tests.
