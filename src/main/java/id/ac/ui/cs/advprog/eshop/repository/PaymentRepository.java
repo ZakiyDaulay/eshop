@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class PaymentRepository {
 
-    private final Map<String, Payment> paymentStorage = new HashMap<>();
+    public final Map<String, Payment> paymentStorage = new HashMap<>();
 
     public void save(Payment payment) {
         paymentStorage.put(payment.getId(), payment);
