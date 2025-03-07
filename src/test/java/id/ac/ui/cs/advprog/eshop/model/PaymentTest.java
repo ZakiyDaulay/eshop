@@ -3,14 +3,16 @@ package id.ac.ui.cs.advprog.eshop.model;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PaymentTest {
+
     @Test
     void testCreatePaymentWithValidData() {
         String id = "1234";
-        String method = "Voucher";
+        PaymentMethod method = PaymentMethod.VOUCHER;
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234ABC5678");
 
@@ -24,7 +26,7 @@ public class PaymentTest {
 
     @Test
     void testPaymentStatusUpdate() {
-        Payment payment = new Payment("1234", "Voucher", PaymentStatus.PENDING, new HashMap<>());
+        Payment payment = new Payment("1234", PaymentMethod.VOUCHER, PaymentStatus.PENDING, new HashMap<>());
         payment.setStatus(PaymentStatus.SUCCESS);
         assertEquals(PaymentStatus.SUCCESS, payment.getStatus());
     }
@@ -32,7 +34,7 @@ public class PaymentTest {
     @Test
     void testCreatePaymentWithInvalidData() {
         String id = "5678";
-        String method = "Voucher";
+        PaymentMethod method = PaymentMethod.VOUCHER;
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "INVALIDCODE");
 

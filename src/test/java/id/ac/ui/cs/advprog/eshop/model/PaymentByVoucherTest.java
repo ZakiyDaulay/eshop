@@ -1,3 +1,7 @@
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
+import id.ac.ui.cs.advprog.eshop.model.Payment;
+import id.ac.ui.cs.advprog.eshop.service.PaymentServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
+
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceImplTest {
@@ -24,7 +30,8 @@ class PaymentServiceImplTest {
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234ABC5678"); // Valid voucher
 
-        Payment expectedPayment = new Payment(id, method, PaymentStatus.SUCCESS, paymentData);
+        Payment expectedPayment = new Payment(id, PaymentMethod.VOUCHER, PaymentStatus.SUCCESS, paymentData);
+
 
         // Mock repository behavior
         doAnswer(invocation -> invocation.getArgument(0))
@@ -51,7 +58,7 @@ class PaymentServiceImplTest {
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234"); // Too short (invalid)
 
-        Payment expectedPayment = new Payment(id, method, PaymentStatus.REJECTED, paymentData);
+        Payment expectedPayment = new Payment(id, PaymentMethod.VOUCHER, PaymentStatus.REJECTED, paymentData);
 
         // Mock repository behavior
         doAnswer(invocation -> invocation.getArgument(0))

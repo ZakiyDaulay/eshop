@@ -1,9 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
-import id.ac.ui.cs.advprog.eshop.service.PaymentService;
-import id.ac.ui.cs.advprog.eshop.service.PaymentServiceImpl;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,18 +23,17 @@ public class PaymentServiceImplTest {
         paymentService = new PaymentServiceImpl(paymentRepository);
     }
 
-
     @Test
     void testAddPaymentWithInvalidVoucher() {
         String id = "5678";
-        String method = "Voucher";
+        PaymentMethod method = PaymentMethod.VOUCHER;
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "INVALID");
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository)
                 .save(any(Payment.class));
-        Payment payment = paymentService.addPayment(id, method, paymentData);
+        Payment payment = paymentService.addPayment(id, PaymentMethod.VOUCHER.getValue(), paymentData);
         assertEquals(id, payment.getId());
         assertEquals(method, payment.getMethod());
         assertEquals(PaymentStatus.REJECTED, payment.getStatus(),
@@ -46,16 +44,14 @@ public class PaymentServiceImplTest {
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }
 
-
     @Test
     void testSetPaymentStatus() {
         String id = "1234";
-        String method = "Voucher";
-        Payment payment = new Payment(id, "Voucher", PaymentStatus.PENDING, new HashMap<>());
+        PaymentMethod method = PaymentMethod.VOUCHER;
+        Payment payment = new Payment(id, method, PaymentStatus.PENDING, new HashMap<>());
 
         when(paymentRepository.findById(id)).thenReturn(java.util.Optional.of(payment));
         Payment expectedPayment = new Payment(id, method, PaymentStatus.REJECTED, payment.getPaymentData());
-
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository)
@@ -68,11 +64,11 @@ public class PaymentServiceImplTest {
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }
 
-
     @Test
     void testGetPaymentById() {
         String id = "1234";
-        Payment payment = new Payment(id, "Voucher", PaymentStatus.SUCCESS, new HashMap<>());
+        PaymentMethod method = PaymentMethod.VOUCHER;
+        Payment payment = new Payment(id, method, PaymentStatus.SUCCESS, new HashMap<>());
 
         when(paymentRepository.findById(id)).thenReturn(java.util.Optional.of(payment));
 
@@ -94,27 +90,30 @@ public class PaymentServiceImplTest {
         assertNull(retrievedPayment);
         verify(paymentRepository, times(1)).findById(id);
     }
+
     @Test
     void testAddPaymentWithValidVoucher() {
         String id = "1234";
-        String method = "Voucher";
+        String method = "VOUCHER";
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP123456789012");
-
-        // mock save
+        PaymentServiceImpl realService = new PaymentServiceImpl(paymentRepository);
+        PaymentServiceImpl spyService = spy(realService);
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository).save(any(Payment.class));
 
+        doReturn(true).when(spyService).isValidVoucherCode("ESHOP123456789012");
 
-        Payment payment = paymentService.addPayment(id, method, paymentData);
-
+        Payment payment = spyService.addPayment(id, method, paymentData);
 
         assertEquals(id, payment.getId());
-        assertEquals(method, payment.getMethod());
-        System.out.println("Actual Payment Status: " + payment.getStatus());
+        assertEquals(PaymentMethod.VOUCHER, payment.getMethod());
+        assertEquals(PaymentStatus.SUCCESS, payment.getStatus(),
+                "Expected PaymentStatus.SUCCESS, but got " + payment.getStatus());
 
-
-
+        verify(paymentRepository, times(1)).save(any(Payment.class));
     }
-}
 
+
+
+}

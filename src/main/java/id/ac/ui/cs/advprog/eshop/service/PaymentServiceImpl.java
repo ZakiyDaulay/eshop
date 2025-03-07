@@ -1,5 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
+import id.ac.ui.cs.advprog.eshop.enums.PaymentMethod;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
@@ -17,11 +18,16 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+
     public Payment addPayment(String id, String method, Map<String, String> paymentData) {
+        if (!PaymentMethod.isValidMethod(method)) {
+            throw new IllegalArgumentException("Invalid payment method: " + method);
+        }
+
+        PaymentMethod paymentMethod = PaymentMethod.valueOf(method.toUpperCase());
         PaymentStatus status = PaymentStatus.PENDING;
 
-        // Validate voucher code for "Voucher Payment" method
-        if ("Voucher".equals(method)) {
+        if (paymentMethod == PaymentMethod.VOUCHER) {
             String voucherCode = paymentData.get("voucherCode");
             if (isValidVoucherCode(voucherCode)) {
                 status = PaymentStatus.SUCCESS;
@@ -30,10 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
 
-        Payment payment = new Payment(id, method, status, paymentData);
+
+        Payment payment = new Payment(id, paymentMethod, status, paymentData);
         paymentRepository.save(payment);
         return payment;
     }
+
+
 
     @Override
     public Payment setStatus(String paymentId, PaymentStatus status) {
@@ -53,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
         return new ArrayList<>(paymentRepository.paymentStorage.values());
     }
 
-    private boolean isValidVoucherCode(String voucherCode) {
+    boolean isValidVoucherCode(String voucherCode) {
         return voucherCode != null &&
                 voucherCode.length() == 16 &&
                 voucherCode.startsWith("ESHOP") &&
