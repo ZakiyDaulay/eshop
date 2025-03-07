@@ -57,4 +57,12 @@ I found the TDD workflow quite useful, as splitting the process into two section
 of the tests and features.The REFACTOR commits also helped in making my code less hardcoded which increases the maintainability of my code.
 
 Fast:The tests ran quickly as there were no external dependencies
-Independent:
+
+Independent:All the tests are isolated from each other. For some of the test files, I should have added before each to make sure that each testcase
+has a fresh state
+
+Repeatable:The results of the test are consistent and don't change because I didn't use any external dependencies.
+
+Self-Validating:I used various assertion methods to ensure that it automatically determines if my tests should pass or fail.
+
+Timely: I made sure that I wrote the tests before the implementation so that the code that I will write will only have to pass the requirements of my tests.
