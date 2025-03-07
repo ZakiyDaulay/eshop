@@ -51,3 +51,10 @@ Disadvantages of not using SOLID:
 of the classes is not good
 2. Not implementing OCP means that implementing new features would have to modify existing classes that have no bugs.
 3. Not implementing DIP would mean that classes depend on concrete implementations which can make unit testing more difficult.
+
+## **Assignment 4 Reflection 1**
+I found the TDD workflow quite useful, as splitting the process into two sections with GREEN and RED commits helped in setting the goal
+of the tests and features.The REFACTOR commits also helped in making my code less hardcoded which increases the maintainability of my code.
+
+Fast:The tests ran quickly as there were no external dependencies
+Independent:
