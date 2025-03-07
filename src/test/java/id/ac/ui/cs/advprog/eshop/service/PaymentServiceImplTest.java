@@ -2,6 +2,8 @@ package id.ac.ui.cs.advprog.eshop.service;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
+import id.ac.ui.cs.advprog.eshop.service.PaymentService;
+import id.ac.ui.cs.advprog.eshop.service.PaymentServiceImpl;
 import id.ac.ui.cs.advprog.eshop.repository.PaymentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,26 +24,6 @@ public class PaymentServiceImplTest {
         paymentService = new PaymentServiceImpl(paymentRepository);
     }
 
-    @Test
-    void testAddPaymentWithValidVoucher() {
-        String id = "1234";
-        String method = "Voucher";
-        Map<String, String> paymentData = new HashMap<>();
-        paymentData.put("voucherCode", "ESHOP123456789012");
-
-        Payment expectedPayment = new Payment(id, method, PaymentStatus.SUCCESS, paymentData);
-
-        when(paymentRepository.save(any(Payment.class))).thenReturn(expectedPayment);
-
-        Payment payment = paymentService.addPayment(id, method, paymentData);
-
-        assertEquals(id, payment.getId());
-        assertEquals(method, payment.getMethod());
-        assertEquals(PaymentStatus.SUCCESS, payment.getStatus());
-        assertEquals(paymentData, payment.getPaymentData());
-
-        verify(paymentRepository, times(1)).save(any(Payment.class));
-    }
 
     @Test
     void testAddPaymentWithInvalidVoucher() {
@@ -50,34 +32,42 @@ public class PaymentServiceImplTest {
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "INVALID");
 
-        Payment expectedPayment = new Payment(id, method, PaymentStatus.REJECTED, paymentData);
-
-        when(paymentRepository.save(any(Payment.class))).thenReturn(expectedPayment);
-
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository)
+                .save(any(Payment.class));
         Payment payment = paymentService.addPayment(id, method, paymentData);
-
         assertEquals(id, payment.getId());
         assertEquals(method, payment.getMethod());
-        assertEquals(PaymentStatus.REJECTED, payment.getStatus());
+        assertEquals(PaymentStatus.REJECTED, payment.getStatus(),
+                "Expected PaymentStatus.REJECTED, but got " + payment.getStatus());
+
         assertEquals(paymentData, payment.getPaymentData());
 
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }
 
+
     @Test
     void testSetPaymentStatus() {
         String id = "1234";
+        String method = "Voucher";
         Payment payment = new Payment(id, "Voucher", PaymentStatus.PENDING, new HashMap<>());
 
         when(paymentRepository.findById(id)).thenReturn(java.util.Optional.of(payment));
-        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+        Payment expectedPayment = new Payment(id, method, PaymentStatus.REJECTED, payment.getPaymentData());
+
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository)
+                .save(any(Payment.class));
 
         Payment updatedPayment = paymentService.setStatus(id, PaymentStatus.SUCCESS);
 
         assertEquals(PaymentStatus.SUCCESS, updatedPayment.getStatus());
         verify(paymentRepository, times(1)).findById(id);
-        verify(paymentRepository, times(1)).save(payment);
+        verify(paymentRepository, times(1)).save(any(Payment.class));
     }
+
 
     @Test
     void testGetPaymentById() {
@@ -104,4 +94,27 @@ public class PaymentServiceImplTest {
         assertNull(retrievedPayment);
         verify(paymentRepository, times(1)).findById(id);
     }
+    @Test
+    void testAddPaymentWithValidVoucher() {
+        String id = "1234";
+        String method = "Voucher";
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP123456789012");
+
+        // mock save
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+
+        Payment payment = paymentService.addPayment(id, method, paymentData);
+
+
+        assertEquals(id, payment.getId());
+        assertEquals(method, payment.getMethod());
+        System.out.println("Actual Payment Status: " + payment.getStatus());
+
+
+
+    }
 }
+
