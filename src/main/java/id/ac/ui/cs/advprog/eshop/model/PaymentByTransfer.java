@@ -18,10 +18,16 @@ public class PaymentByTransfer extends Payment {
     }
 
     private static PaymentStatus determineStatus(String bankName, String referenceCode) {
-        return null;
+        if (bankName == null || bankName.isEmpty() || referenceCode == null || referenceCode.isEmpty()) {
+            return PaymentStatus.REJECTED;
+        }
+        return PaymentStatus.SUCCESS;
     }
 
     private static Map<String, String> createPaymentData(String bankName, String referenceCode) {
-       return null;
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", bankName);
+        paymentData.put("referenceCode", referenceCode);
+        return paymentData;
     }
 }
